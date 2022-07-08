@@ -9,15 +9,21 @@ const bcrypt = require('bcrypt');
 
 
 router.put('/:id',verifiedTokenAuth ,async(req, res)=>{
-    
-
+    if(req.body.password){
+        try{
+            const salt = await bcrypt.genSalt(10)
+            req.body.password = await bcrypt.hash(req.body.password, salt)
+        }catch(err){
+            return res.status(400).send(err)
+        }
+    }
     try {
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-            $set: req.body
-        },{new:true})
-        res.status(200).send(updatedUser)
+        const updatedUser = await Users.findByIdAndUpdate(req.params.id,{
+            $set:req.body
+        })
+        return res.status(200).send(updatedUser);
     } catch (error) {
-        res.status.send(error)
+       return res.status(400).send(error)
     }
 })
 
