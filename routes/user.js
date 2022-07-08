@@ -3,15 +3,13 @@ const {verifiedToken, verifiedTokenAuth, verifiedTokenAdmin}= require('./verify'
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 
-const salt=bcrypt.genSalt(10);
+
 
 
 
 
 router.put('/:id',verifiedTokenAuth ,async(req, res)=>{
-    if(req.body.password){
-        req.body.password=  await bcrypt.hash(req.body.password ,salt)
-    }
+    
 
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.id, {
