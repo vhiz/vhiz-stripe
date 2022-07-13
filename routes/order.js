@@ -2,17 +2,18 @@ const router = require('express').Router()
 const Order = require('../models/order')
 const {verifiedToken, verifiedTokenAuth, verifiedTokenAdmin}= require('./verify')
 
-router.post('/create',verifiedTokenAdmin, async(req, res)=>{
+router.post('/create',verifiedTokenAuth, async(req, res)=>{
     const newOrder = new Order(req.body)
     try{
         const savedOrder= newOrder.save()
-        res.status(200).json(savedOrder)
+        res.status(200).json("pending")
+        console.log(savedOrder)
     }catch(err){
         res.status(400).send(err)
     }
 })
 
-router.put('/:id', verifiedTokenAdmin, async(req, res)=>{
+router.put('/:id', verifiedTokenAuth, async(req, res)=>{
     try {
         const updatedOrder = await Order.findByIdAndUpdate(req.params.id, {
             $set: req.body
@@ -23,7 +24,7 @@ router.put('/:id', verifiedTokenAdmin, async(req, res)=>{
     }
 })
 
-router.delete('/:id', verifiedTokenAdmin, async(req, res)=>{
+router.delete('/:id', verifiedTokenAuth, async(req, res)=>{
     try{
         await Order.findByIdAndDelete(req.params.id)
         res.status(200).send('cart has been deleted')
@@ -32,7 +33,7 @@ router.delete('/:id', verifiedTokenAdmin, async(req, res)=>{
     }
 })
 
-router.get('/get/:id',verifiedTokenAdmin,async(req, res)=>{
+router.get('/get/:id',verifiedTokenAuth,async(req, res)=>{
     try{
         const orders = await Order.find({_id:req.params.id})
         res.status(200).send(orders)
